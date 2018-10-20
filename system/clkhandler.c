@@ -17,15 +17,16 @@ void	clkhandler()
 		resched();
 	}
 
-	if(proctab[currpid].usr_proc_flag == 1 && proctab[currpid].burst_duration > 0 && proctab[currpid].burst_done != 1)
+	if(proctab[currpid].usr_proc_flag == 1 && proctab[currpid].prstate == PR_CURR && proctab[currpid].burst_duration > 0 && proctab[currpid].burst_done != 1)
 	{
 		proctab[currpid].burst_duration--;
 		proctab[currpid].time_alloted--;
 		if(proctab[currpid].time_alloted == 0)
 		{
 			resched();
+			//proctab[currpid].time_alloted = 0;
 		}
-		else if(proctab[currpid].burst_duration == 0)
+		if(proctab[currpid].burst_duration == 0)
 		{
 			proctab[currpid].burst_done = 1;
 		}

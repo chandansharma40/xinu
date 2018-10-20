@@ -91,11 +91,11 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 			if ((nonempty(readylist)) && (firstid(readylist) != NULLPROC))
 			{
 				#ifdef CTXSW
-				kprintf("ctxsw::%d-",currpid);
+				kprintf("1 ctxsw::%d,%d-",currpid,proctab[currpid].qnum);
 				#endif
 				currpid = dequeue(readylist);
 				#ifdef CTXSW
-				kprintf("%d\n",currpid);
+				kprintf("%d,%d\n",currpid,proctab[currpid].qnum);
 				#endif
 				ptnew = &proctab[currpid];
 				ptnew->prstate = PR_CURR;
@@ -107,11 +107,11 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 			else if(nonempty(readylisy_usr1))
 			{
 				#ifdef CTXSW
-				kprintf("ctxsw::%d-",currpid);
+				kprintf("1 ctxsw::%d,%d-",currpid,proctab[currpid].qnum);
 				#endif
 				currpid = dequeue(readylisy_usr1);
 				#ifdef CTXSW
-				kprintf("%d\n",currpid);
+				kprintf("%d,%d\n",currpid,proctab[currpid].qnum);
 				#endif
 				ptnew = &proctab[currpid];
 				ptnew->prstate = PR_CURR;
@@ -122,11 +122,11 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 			else if(nonempty(readylisy_usr2))
 			{
 				#ifdef CTXSW
-				kprintf("ctxsw::%d-",currpid);
+				kprintf("1 ctxsw::%d,%d-",currpid,proctab[currpid].qnum);
 				#endif
 				currpid = dequeue(readylisy_usr2);
 				#ifdef CTXSW
-				kprintf("%d\n",currpid);
+				kprintf("%d,%d\n",currpid,proctab[currpid].qnum);
 				#endif
 				ptnew = &proctab[currpid];
 				ptnew->prstate = PR_CURR;
@@ -137,11 +137,11 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 			else if(nonempty(readylisy_usr3))
 			{
 				#ifdef CTXSW
-				kprintf("ctxsw::%d-",currpid);
+				kprintf("1 ctxsw::%d,%d-",currpid,proctab[currpid].qnum);
 				#endif
 				currpid = dequeue(readylisy_usr3);
 				#ifdef CTXSW
-				kprintf("%d\n",currpid);
+				kprintf("%d,%d\n",currpid,proctab[currpid].qnum);
 				#endif
 				ptnew = &proctab[currpid];
 				ptnew->prstate = PR_CURR;
@@ -153,7 +153,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 			else 
 			{
 				#ifdef CTXSW
-				kprintf("ctxsw::%d-",currpid);
+				kprintf("2 ctxsw::%d-",currpid);
 				#endif
 				currpid = dequeue(readylist);
 				#ifdef CTXSW
@@ -167,7 +167,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 		/* if main came back from sleep, make current user proc PR_READY and push back to same queue*/
 		else if(ptold->prstate == PR_CURR)
 		{
-			if(firstid(readylist != NULLPROC))
+			if(firstid(readylist) != NULLPROC)
 			{
 				ptold->prstate = PR_READY;
 				switch(ptold->qnum){
@@ -184,7 +184,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 						break;
 				}
 				#ifdef CTXSW
-				kprintf("ctxsw::%d-",currpid);
+				kprintf("3 ctxsw::%d-",currpid);
 				#endif
 				currpid = dequeue(readylist);
 				#ifdef CTXSW
@@ -208,7 +208,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 						insert(currpid, readylisy_usr3, proctab[currpid].prprio);
 					
 					#ifdef CTXSW
-					kprintf("ctxsw::%d-",currpid);
+					kprintf("4 ctxsw::%d-",currpid);
 					#endif
 					currpid = dequeue(readylisy_usr1);
 					#ifdef CTXSW
@@ -230,7 +230,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 						insert(currpid, readylisy_usr3, proctab[currpid].prprio);
 					
 					#ifdef CTXSW
-					kprintf("ctxsw::%d-",currpid);
+					kprintf("4 ctxsw::%d-",currpid);
 					#endif
 					currpid = dequeue(readylisy_usr2);
 					#ifdef CTXSW
@@ -252,9 +252,9 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 						insert(currpid, readylisy_usr3, proctab[currpid].prprio);
 					
 					#ifdef CTXSW
-					kprintf("ctxsw::%d-",currpid);
+					kprintf("4 ctxsw::%d-",currpid);
 					#endif
-					currpid = dequeue(readylisy_usr2);
+					currpid = dequeue(readylisy_usr3);
 					#ifdef CTXSW
 					kprintf("%d\n",currpid);
 					#endif
@@ -277,9 +277,9 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 			if(firstid(readylist) != NULLPROC)
 			{
 				#ifdef CTXSW
-				kprintf("ctxsw::%d-",currpid);
+				kprintf("5 ctxsw::%d-",currpid);
 				#endif
-				currpid = dequeue(readylisy_usr2);
+				currpid = dequeue(readylist);
 				#ifdef CTXSW
 				kprintf("%d\n",currpid);
 				#endif
@@ -296,9 +296,9 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 				(isempty(readylisy_usr3)))
 				{
 					#ifdef CTXSW
-					kprintf("ctxsw::%d-",currpid);
+					kprintf("6 ctxsw::%d-",currpid);
 					#endif
-					currpid = dequeue(readylisy_usr2);
+					currpid = dequeue(readylist);
 					#ifdef CTXSW
 					kprintf("%d\n",currpid);
 					#endif
@@ -311,7 +311,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 				else
 				{
 					#ifdef CTXSW
-					kprintf("ctxsw::%d-",currpid);
+					kprintf("7 ctxsw::%d-",currpid);
 					#endif
 
 					if(nonempty(readylisy_usr1))
@@ -356,7 +356,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 					if(nonempty(readylisy_usr1))
 					{
 						#ifdef CTXSW
-						kprintf("ctxsw::%d-",currpid);
+						kprintf("8 ctxsw::%d-",currpid);
 						#endif
 						currpid = dequeue(readylisy_usr1);
 						#ifdef CTXSW
@@ -370,7 +370,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 					else if(nonempty(readylisy_usr2))
 					{
 						#ifdef CTXSW
-						kprintf("ctxsw::%d-",currpid);
+						kprintf("8 ctxsw::%d-",currpid);
 						#endif
 						currpid = dequeue(readylisy_usr2);
 						#ifdef CTXSW
@@ -384,7 +384,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 					else if(nonempty(readylisy_usr3))
 					{
 						#ifdef CTXSW
-						kprintf("ctxsw::%d-",currpid);
+						kprintf("8 ctxsw::%d-",currpid);
 						#endif
 						currpid = dequeue(readylisy_usr3);
 						#ifdef CTXSW
@@ -404,7 +404,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 				{
 					insert(currpid, readylist, ptold->prprio);
 					#ifdef CTXSW
-					kprintf("ctxsw::%d-",currpid);
+					kprintf("9 ctxsw::%d-",currpid);
 					#endif
 					currpid = dequeue(readylist);
 					#ifdef CTXSW
@@ -430,7 +430,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 				{
 					insert(currpid, readylist, ptold->prprio);
 					#ifdef CTXSW
-					kprintf("ctxsw::%d-",currpid);
+					kprintf("10 ctxsw::%d-",currpid);
 					#endif
 					currpid = dequeue(readylist);
 					#ifdef CTXSW
@@ -451,7 +451,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 					if(nonempty(readylisy_usr1))
 					{
 						#ifdef CTXSW
-						kprintf("ctxsw::%d-",currpid);
+						kprintf("11 ctxsw::%d-",currpid);
 						#endif
 						currpid = dequeue(readylisy_usr1);
 						#ifdef CTXSW
@@ -465,7 +465,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 					else if(nonempty(readylisy_usr2))
 					{
 						#ifdef CTXSW
-						kprintf("ctxsw::%d-",currpid);
+						kprintf("11 ctxsw::%d-",currpid);
 						#endif
 						currpid = dequeue(readylisy_usr2);
 						#ifdef CTXSW
@@ -479,7 +479,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 					else if(nonempty(readylisy_usr3))
 					{
 						#ifdef CTXSW
-						kprintf("ctxsw::%d-",currpid);
+						kprintf("11 ctxsw::%d-",currpid);
 						#endif
 						currpid = dequeue(readylisy_usr3);
 						#ifdef CTXSW
@@ -493,7 +493,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 					else
 					{
 						#ifdef CTXSW
-						kprintf("ctxsw::%d-",currpid);
+						kprintf("11 ctxsw::%d-",currpid);
 						#endif
 						currpid = dequeue(readylist);
 						#ifdef CTXSW
@@ -508,7 +508,7 @@ void	resched(void)		/* Assumes interrupts are disabled	*/
 				else
 				{
 					#ifdef CTXSW
-					kprintf("ctxsw::%d-",currpid);
+					kprintf("12 ctxsw::%d-",currpid);
 					#endif
 					currpid = dequeue(readylist);
 					#ifdef CTXSW
