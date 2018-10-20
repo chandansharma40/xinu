@@ -119,6 +119,11 @@ extern	pid32	getfirst(qid16);
 extern	pid32	getlast(qid16);
 extern	pid32	getitem(pid32);
 
+/* in file create_user_proc.c */
+extern void burst_execution(void);
+
+extern syscall print_ready_list();
+
 /* in file getmem.c */
 extern	char	*getmem(uint32);
 

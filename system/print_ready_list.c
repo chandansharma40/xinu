@@ -18,12 +18,31 @@ syscall print_ready_list()
 		curr = queuetab[curr].qnext;	
 	}
 
-	curr = firstid(readylist_usr);
-	kprintf("in print.c %d\n",curr);
+	curr = firstid(readylisy_usr1);
 
-	kprintf("User List\n----------\n");
+	kprintf("HIGH PRIO List\n----------\n");
 
-	while(curr != queuetail(readylist_usr))
+	while(curr != queuetail(readylisy_usr1))
+	{
+		kprintf("PID = %d   State = %s\n",curr,pstate[(int)proctab[curr].prstate]);
+		curr = queuetab[curr].qnext;	
+	}
+
+	curr = firstid(readylisy_usr2);
+
+	kprintf("Ready List\n----------\n");
+
+	while(curr != queuetail(readylisy_usr2))
+	{
+		kprintf("PID = %d   State = %s\n",curr,pstate[(int)proctab[curr].prstate]);
+		curr = queuetab[curr].qnext;	
+	}
+
+	curr = firstid(readylisy_usr3);
+
+	kprintf("Ready List\n----------\n");
+
+	while(curr != queuetail(readylisy_usr3))
 	{
 		kprintf("PID = %d   State = %s\n",curr,pstate[(int)proctab[curr].prstate]);
 		curr = queuetab[curr].qnext;	

@@ -50,6 +50,14 @@ pid32	create(
 	prptr->prparent = (pid32)getpid();
 	prptr->prhasmsg = FALSE;
 
+	prptr->usr_proc_flag = 0;
+	prptr->qnum = 0;
+	prptr->time_alloted = 0;
+	prptr->no_of_bursts = 0;
+	prptr->burst_done = 0;
+	prptr->burst_duration = 0;
+	prptr->sleep_duration = 0;
+
 	/* Set up stdin, stdout, and stderr descriptors for the shell	*/
 	prptr->prdesc[0] = CONSOLE;
 	prptr->prdesc[1] = CONSOLE;

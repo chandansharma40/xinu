@@ -1,23 +1,51 @@
-/*  main.c  - main */
-
 #include <xinu.h>
+#include <stdio.h>
 
-process	main(void)
-{
+int prA, prB;
+int proc_a(), proc_b();
+volatile int a_cnt = 0;
+volatile int b_cnt = 0;
 
-	/* Run the Xinu shell */
+//TIME_SLICE            2
+//TIME_ALLOTMENT        400
+//PRIORITY_BOOST_PERIOD 2200
 
-	recvclr();
-	resume(create(shell, 8192, 50, "shell", 1, CONSOLE));
+int main() {
+    double total_cnt, a_percent, b_percent;
+	int i;
 
-	/* Wait for shell to exit and recreate it */
+    kprintf("\n\n########## Test Case 2, MLFQ scheduling (2 processes):\n");
+    resume( prA = create_user_proc(proc_a, 1024, 10000, "proc A", 3, 1, 10000, 0) );
+    resume( prB = create_user_proc(proc_b, 1024, 600, "proc B", 3, 2, 300, 300) );
+    sleepms(1000);
+	for(i=0;i<100000000;i++);
+	kill(prA);
+	kill(prB);
+    total_cnt = a_cnt + b_cnt ;
+    a_percent = (double) a_cnt / total_cnt * 100;
+    b_percent = (double) b_cnt / total_cnt * 100;
+    kprintf("Test RESULT: A : B (%d : %d)\n", (int) a_percent, (int) b_percent);
 
-	while (TRUE) {
-		receive();
-		sleepms(200);
-		kprintf("\n\nMain process recreating shell\n\n");
-		resume(create(shell, 4096, 20, "shell", 1, CONSOLE));
-	}
 	return OK;
-    
+}
+
+
+proc_a(c)
+char c; {
+    int i;
+    while (1) {
+        for (i = 0; i < 100; i++)
+            ;
+        a_cnt++;
+    }
+}
+
+proc_b(c)
+char c; {
+    int i;
+    while (1) {
+        for (i = 0; i < 100; i++)
+            ;
+        b_cnt++;
+    }
 }
