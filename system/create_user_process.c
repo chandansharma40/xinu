@@ -1,17 +1,10 @@
 #include <xinu.h>
+#include <stdarg.h>
 
-local int  newpid();
-void set_tickets(pid32 id, uint32 tickets);
-void timed_execution(uint32 run_time);
-int set_tickets_address = 0;
+//local int  newpid();
+void burst_execution(void);
 
-void set_tickets(pid32 id, uint32 tickets) 
-{
-	proctab[id].no_of_tickets = tickets;
-	max_tickets = max_tickets + tickets;
-}
-
-void timed_execution(uint32 run_time)
+void burst_execution(void)
 {
 	while(1);
 }
@@ -20,7 +13,6 @@ pid32	create_user_proc(
 	  void		*funcaddr,	/* Address of the function	*/
 	  uint32	ssize,		/* Stack size in bytes		*/
 	  uint32	run_time,	/* Run Time specified by user	*/
-	  pri16		priority,	/* Process priority > 0		*/
 	  char	 	*name,		/* Name (for debugging)		*/
 	  uint32	nargs,		/* Number of args that follow	*/
 	  ...
@@ -38,7 +30,7 @@ pid32	create_user_proc(
 	if (ssize < MINSTK)
 		ssize = MINSTK;
 	ssize = (uint32) roundmb(ssize);
-	if ( ((pid=newpid()) == SYSERR) ||
+	if ( run_time < 0 || ((pid=newpid()) == SYSERR) ||
 	     ((saddr = (uint32 *)getstk(ssize)) == (uint32 *)SYSERR) ) {
 		restore(mask);
 		return SYSERR;
@@ -50,7 +42,7 @@ pid32	create_user_proc(
 
 	/* Initialize process table entry for new process */
 	prptr->prstate = PR_SUSP;	/* Initial state is suspended	*/
-	prptr->prprio = priority;
+	prptr->prprio = 10;
 	prptr->prstkbase = (char *)saddr;
 	prptr->prstklen = ssize;
 	prptr->prname[PNMLEN-1] = NULLCH;
@@ -60,9 +52,20 @@ pid32	create_user_proc(
 	prptr->prparent = (pid32)getpid();
 	prptr->prhasmsg = FALSE;
 
-	prptr->no_of_tickets = 0;
-	prptr->run_time = run_time;
 	prptr->usr_proc_flag = 1;
+	prptr->run_time = run_time;
+	prptr->burst_done = 0;
+	prptr->qnum = 1;
+	prptr->time_alloted = TIME_ALLOTMENT;
+
+	va_list args;
+	va_start(args,nargs);
+	prptr->no_of_bursts = (uint32) va_arg(args,uint32);
+	prptr->burst_duration = prptr->set_burst_duration = (uint32) va_arg(args,uint32);
+	prptr->sleep_duration = (uint32) va_arg(args,uint32);
+	va_end(args);
+
+	kprintf("P%d-creation::%d::%d\n",pid,proctab[pid].no_of_bursts,proctab[pid].burst_duration);
 
 	/* Set up stdin, stdout, and stderr descriptors for the shell	*/
 	prptr->prdesc[0] = CONSOLE;
@@ -115,21 +118,21 @@ pid32	create_user_proc(
  *  newpid  -  Obtain a new (free) process ID
  *------------------------------------------------------------------------
  */
-local	pid32	newpid(void)
-{
-	uint32	i;			/* Iterate through all processes*/
-	static	pid32 nextpid = 1;	/* Position in table to try or	*/
-					/*   one beyond end of table	*/
+// local	pid32	newpid(void)
+// {
+// 	uint32	i;			/* Iterate through all processes*/
+// 	static	pid32 nextpid = 1;	/* Position in table to try or	*/
+// 					/*   one beyond end of table	*/
 
-	/* Check all NPROC slots */
+// 	/* Check all NPROC slots */
 
-	for (i = 0; i < NPROC; i++) {
-		nextpid %= NPROC;	/* Wrap around to beginning */
-		if (proctab[nextpid].prstate == PR_FREE) {
-			return nextpid++;
-		} else {
-			nextpid++;
-		}
-	}
-	return (pid32) SYSERR;
-}
+// 	for (i = 0; i < NPROC; i++) {
+// 		nextpid %= NPROC;	/* Wrap around to beginning */
+// 		if (proctab[nextpid].prstate == PR_FREE) {
+// 			return nextpid++;
+// 		} else {
+// 			nextpid++;
+// 		}
+// 	}
+// 	return (pid32) SYSERR;
+// }

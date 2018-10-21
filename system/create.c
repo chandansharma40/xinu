@@ -2,7 +2,7 @@
 
 #include <xinu.h>
 
-local	int newpid();
+pid32 newpid();
 
 /*------------------------------------------------------------------------
  *  create  -  Create a process to start running a function on x86
@@ -49,6 +49,14 @@ pid32	create(
 	prptr->prsem = -1;
 	prptr->prparent = (pid32)getpid();
 	prptr->prhasmsg = FALSE;
+
+	prptr->usr_proc_flag = 0;
+	prptr->qnum = 0;
+	prptr->time_alloted = 0;
+	prptr->no_of_bursts = 0;
+	prptr->burst_done = 0;
+	prptr->burst_duration = 0;
+	prptr->sleep_duration = 0;
 
 	/* Set up stdin, stdout, and stderr descriptors for the shell	*/
 	prptr->prdesc[0] = CONSOLE;
@@ -101,7 +109,7 @@ pid32	create(
  *  newpid  -  Obtain a new (free) process ID
  *------------------------------------------------------------------------
  */
-local	pid32	newpid(void)
+pid32	newpid(void)
 {
 	uint32	i;			/* Iterate through all processes*/
 	static	pid32 nextpid = 1;	/* Position in table to try or	*/
