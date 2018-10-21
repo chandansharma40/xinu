@@ -65,7 +65,7 @@ pid32	create_user_proc(
 	prptr->sleep_duration = (uint32) va_arg(args,uint32);
 	va_end(args);
 
-	kprintf("P%d-creation::%d::%d\n",pid,proctab[pid].no_of_bursts,proctab[pid].burst_duration);
+	//kprintf("P%d-creation::%d::%d\n",pid,proctab[pid].no_of_bursts,proctab[pid].burst_duration);
 
 	/* Set up stdin, stdout, and stderr descriptors for the shell	*/
 	prptr->prdesc[0] = CONSOLE;

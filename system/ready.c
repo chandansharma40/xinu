@@ -31,15 +31,13 @@ status	ready(
 	}
 	else
 	{
-		switch(proctab[currpid].qnum)
+		switch(proctab[pid].qnum)
 		{
 			case 1 	:	insert(pid, readylisy_usr1, prptr->prprio);
 					 	break;
 			case 2	:	insert(pid, readylisy_usr2, prptr->prprio);
 						break;
 			case 3	:	insert(pid, readylisy_usr3, prptr->prprio);
-						break;
-			default	:	insert(pid, readylisy_usr1, prptr->prprio);
 						break;
 		}
 	}

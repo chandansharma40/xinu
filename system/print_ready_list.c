@@ -30,7 +30,7 @@ syscall print_ready_list()
 
 	curr = firstid(readylisy_usr2);
 
-	kprintf("Ready List\n----------\n");
+	kprintf("MED PRIO List\n----------\n");
 
 	while(curr != queuetail(readylisy_usr2))
 	{
@@ -40,7 +40,7 @@ syscall print_ready_list()
 
 	curr = firstid(readylisy_usr3);
 
-	kprintf("Ready List\n----------\n");
+	kprintf("LOW PRIO List\n----------\n");
 
 	while(curr != queuetail(readylisy_usr3))
 	{
